@@ -3,18 +3,18 @@
 
 We now include some lightweight tools to orchestrate simple pipelines via hamilton.
 
-To get started, take a look at the [example](/src/lf_orchestrator/example.py), and then run it with python, providing paramters as needed.
+To get started, take a look at the [example](/docs/example.py), and then run it with python, providing paramters as needed.
 
 Typical commands are:
 ```bash
-python ./src/lf_orchestrator/example.py --help
-python ./src/lf_orchestrator/example.py list
-python ./src/lf_orchestrator/example.py run -s all
+python ./docs/example.py --help
+python ./docs/example.py list
+python ./docs/example.py run -s all
 ```
 
 And
 ```bash
-python ./src/lf_orchestrator/example.py run -s all -s step_b:'hello world' -o step_f
+python ./docs/example.py run -s all -s step_b:'hello world' -o step_f
 ```
 
 Will produce the following output:

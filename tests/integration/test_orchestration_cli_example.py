@@ -105,12 +105,12 @@ def test_example_run_all_omit_step_f(tmp_path: Path) -> None:
     """Integration test for example orchestration flow.
 
     Runs:
-        python ./src/lf_orchestrator/example.py run -s all -o step_f
+        python ./docs/example.py run -s all -o step_f
 
     Asserts exit code and key output fragments loosely.
     """
     repo_root = Path(__file__).resolve().parents[2]
-    example_script = repo_root / "src" / "lf_orchestrator" / "example.py"
+    example_script = repo_root / "docs" / "example.py"
 
     # Keep ls output deterministic-ish by running from an isolated temp dir
     # with one known file.

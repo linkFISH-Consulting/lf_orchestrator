@@ -36,7 +36,7 @@ module-name = "lf_orchestrator"
 module-root = "src"
 
 [tool.ruff]
-include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
+include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py", "docs/**/*.py"]
 exclude = ["tests/**"]
 target-version = "py312"
 

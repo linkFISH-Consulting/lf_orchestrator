@@ -116,7 +116,7 @@ def _run_example(
     tmp_path: Path, step_args: list[str], other_args: list[str] = []
 ) -> subprocess.CompletedProcess[str]:
     repo_root = Path(__file__).resolve().parents[2]
-    example_script = repo_root / "src" / "lf_orchestrator" / "example.py"
+    example_script = repo_root / "docs" / "example.py"
 
     dummy_file = tmp_path / "dummy.txt"
     dummy_file.write_text("hello\n", encoding="utf-8")
