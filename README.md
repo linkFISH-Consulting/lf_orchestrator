@@ -2,7 +2,13 @@
 
 Lightweight orchestration for Python workflows, built on [Hamilton](https://github.com/apache/hamilton).
 
-The goal is to provide simple, composable tooling for running Python workflow steps, while the main stack stays focused on collecting and pinning dependencies.
+This project was split out of the Python/DBT stack so it can be developed and released independently.
+The main stack stays focused on collecting and pinning dependencies, while this package owns the orchestration tooling.
+
+## Documentation
+
+- [Orchestration guide](docs/orchestration.md)
+- [Environment variables](docs/env_vars.md)
 
 ## Installation
 
