@@ -1,0 +1,56 @@
+[project]
+name = "lf-orchestrator"
+version = "0.1.0"
+description = "Lightweight orchestration of Python workflows with Hamilton"
+readme = "README.md"
+authors = [
+  {name = "F. Paul Spitzner", email = "paul.spitzner@linkfish.eu"},
+]
+requires-python = ">=3.12,<3.13" # 2025-12-08: 3.13 macht noch Probleme mit unseren Paketen
+dependencies = [
+    "sf-hamilton>=1.89.0, <2.0",
+    "typer",
+    "python-dotenv",
+    "ruamel-yaml",
+    "duckdb>=1.5.1, <2.0",
+    "rich",
+]
+
+[dependency-groups]
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "typed" },
+    "pre-commit>=4.5.1",
+]
+lint = ["ruff>=0.14.14"]
+test = ["pytest>=9.0.2"]
+typed = ["mypy>=1.19.1", "types-PyYAML", "typing_extensions"]
+
+[build-system]
+requires = ["uv_build>=0.13.5,<1.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "lf_orchestrator"
+module-root = "src"
+
+[tool.ruff]
+include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
+exclude = ["tests/**"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "I",   # isort
+    "ISC", # flake8-implicit-str-concat
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "PTH", # Use pathlib instead of os.path
+    "W",   # pycodestyle
+]
+
+[tool.mypy]
+follow_untyped_imports = true # hamilton does not seem to have the py.typed marker yet
