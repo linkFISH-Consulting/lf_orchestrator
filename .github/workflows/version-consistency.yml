@@ -1,0 +1,57 @@
+name: Verify Version consistency
+
+# Dependency pinning is the responsibility of the lf-py-stack repository, so this
+# repo only checks that its own version in pyproject.toml matches uv.lock. There
+# is no requirements.txt to keep in sync.
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  verify-version:
+    name: between pyproject and uv.lock
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+
+      # Fails when uv.lock is stale with respect to pyproject.toml, e.g. after a
+      # version bump or a dependency change that was not followed by `uv lock`.
+      - name: Check uv.lock is up to date with pyproject.toml
+        run: uv lock --check
+
+      - name: Compare project version in pyproject.toml and uv.lock
+        run: |
+          uv run python - <<'PY'
+          import sys
+          import tomllib
+          from pathlib import Path
+
+          pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+          lock = tomllib.loads(Path("uv.lock").read_text(encoding="utf-8"))
+
+          name = pyproject["project"]["name"]
+          expected = pyproject["project"]["version"]
+          locked = next(
+              (pkg["version"] for pkg in lock["package"] if pkg["name"] == name),
+              None,
+          )
+
+          if locked is None:
+              sys.exit(f"❌ {name} not found in uv.lock")
+
+          if locked != expected:
+              sys.exit(
+                  f"❌ Version mismatch: pyproject.toml has {expected}, "
+                  f"uv.lock has {locked}. Run 'uv lock' to update uv.lock."
+              )
+
+          print(f"✅ {name} {expected} matches in pyproject.toml and uv.lock")
+          PY
