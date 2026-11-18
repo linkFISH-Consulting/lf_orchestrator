@@ -11,7 +11,7 @@ TLDR:
 - Breaking Changes v1.0.0 (Major Version)
 
 
-# 0.1.0 - 2026-11-18
+# 0.1.1 - 2026-11-18
 
 - The orchestration tooling has been moved from its previous repository,
   [lf-orchestrator](https://github.com/linkFISH-Consulting/python-dbt-stack).
