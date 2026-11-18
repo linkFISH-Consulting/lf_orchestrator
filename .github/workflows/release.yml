@@ -1,0 +1,110 @@
+name: Create GitHub release
+
+# A push to main happens when a PR is merged. Only create a release when the
+# project version changed between the previous and current main commits.
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release version bump
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check whether the project version changed
+        id: version
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          current="$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+
+          if [[ -z "$BEFORE" || "$BEFORE" =~ ^0+$ ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No previous main commit to compare; skipping release."
+            exit 0
+          fi
+
+          previous="$(git show "${BEFORE}:pyproject.toml" | python -c 'import sys, tomllib; print(tomllib.loads(sys.stdin.read())["project"]["version"])')"
+          echo "version=$current" >> "$GITHUB_OUTPUT"
+
+          if [[ "$current" != "$previous" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Project version changed from $previous to $current."
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Project version is unchanged ($current); skipping release."
+          fi
+
+      - name: Create GitHub release
+        if: steps.version.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          tag="v${VERSION}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "GitHub release $tag already exists; skipping."
+            exit 0
+          fi
+
+          notes_file="/tmp/release_notes.md"
+          if [[ -f CHANGELOG.md ]]; then
+            python - "$VERSION" CHANGELOG.md "$notes_file" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          version, changelog_path, notes_path = sys.argv[1:]
+          lines = Path(changelog_path).read_text(encoding="utf-8").splitlines()
+          current_heading = re.compile(
+              rf"^(#{{1,6}})[ \t]+\[?v?{re.escape(version)}\]?(?:[ \t]+.*)?[ \t]*$"
+          )
+          any_heading = re.compile(r"^(#{1,6})[ \t]+(.+?)\s*#*\s*$")
+
+          start = None
+          heading_level = None
+          end = len(lines)
+          for index, line in enumerate(lines):
+              if start is None:
+                  match = current_heading.match(line)
+                  if match:
+                      start = index + 1
+                      heading_level = len(match.group(1))
+                  continue
+
+              match = any_heading.match(line)
+              if (
+                  match
+                  and len(match.group(1)) == heading_level
+                  and re.match(r"^\[?v?\d", match.group(2), re.IGNORECASE)
+              ):
+                  end = index
+                  break
+
+          if start is not None:
+              notes = "\n".join(lines[start:end]).strip()
+              if notes:
+                  Path(notes_path).write_text(notes + "\n", encoding="utf-8")
+                  print(f"Using CHANGELOG.md notes for {version}.")
+          PY
+          fi
+
+          if [[ -s "$notes_file" ]]; then
+            gh release create "$tag" \
+              --target "$GITHUB_SHA" \
+              --title "Release $tag" \
+              --notes-file "$notes_file"
+          else
+            echo "No CHANGELOG.md section found for $VERSION; using generated notes."
+            gh release create "$tag" \
+              --target "$GITHUB_SHA" \
+              --title "Release $tag" \
+              --generate-notes
+          fi
