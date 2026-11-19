@@ -11,6 +11,11 @@ TLDR:
 - Breaking Changes v1.0.0 (Major Version)
 
 
+# 0.1.2 - 2026-11-19
+
+- Moved docs to docs.linkfish.eu.
+- Removed Python version restriction. This is a responsibility of the lf_py_stack.
+
 # 0.1.1 - 2026-11-18
 
 - The orchestration tooling has been moved from its previous repository,

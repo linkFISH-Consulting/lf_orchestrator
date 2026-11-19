@@ -1,5 +1,7 @@
-"""
-Should become part of the documentation.
+"""Integration-test fixture for the CLI.
+
+This file includes a deliberately failing step and an email step. For safe,
+user-facing examples, see the MDX guides in ``docs/lf_orchestrator/``.
 """
 
 import os

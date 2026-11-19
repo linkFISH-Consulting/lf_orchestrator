@@ -2,18 +2,16 @@
 
 Lightweight orchestration for Python workflows, built on [Hamilton](https://github.com/apache/hamilton).
 
-This project was split out of the Python/DBT stack so it can be developed and released independently.
-The main stack stays focused on collecting and pinning dependencies, while this package owns the orchestration tooling.
-
 ## Documentation
 
-- [Orchestration guide](docs/orchestration.md)
-- [Environment variables](docs/env_vars.md)
+- Published here [docs.linfish.eu](https://docs.linkfish.eu/category/linkfish-orchestrator/)
 
 ## Installation
 
+The package is currently installed from GitHub rather than PyPI:
+
 ```bash
-uv sync
+uv add "lf-orchestrator @ git+https://github.com/linkFISH-Consulting/lf-orchestrator.git"
 ```
 
 ## Development
