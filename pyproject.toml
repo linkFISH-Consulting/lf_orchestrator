@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
   {name = "F. Paul Spitzner", email = "paul.spitzner@linkfish.eu"},
 ]
-requires-python = ">=3.12,<3.13" # 2025-12-08: 3.13 macht noch Probleme mit unseren Paketen
+requires-python = ">=3.12"
 dependencies = [
     "sf-hamilton>=1.89.0, <2.0",
     "typer",
@@ -25,7 +25,7 @@ dev = [
 ]
 lint = ["ruff>=0.14.14"]
 test = ["pytest>=9.0.2"]
-typed = ["mypy>=1.19.1", "types-PyYAML", "typing_extensions"]
+typed = ["mypy>=1.19.1", "typing_extensions"]
 
 [build-system]
 requires = ["uv_build>=0.13.5,<1.0"]
